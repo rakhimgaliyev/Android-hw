@@ -3,7 +3,6 @@ package com.example.hw_1;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.WindowManager;
 import android.view.LayoutInflater;
@@ -14,7 +13,8 @@ import android.widget.Button;
 import android.widget.TableLayout;
 import android.content.Context;
 import android.graphics.Color;
-import android.app.Fragment;
+
+import androidx.fragment.app.Fragment;
 import android.widget.TableRow;
 import android.widget.TableRow.LayoutParams;
 
@@ -23,18 +23,21 @@ import androidx.annotation.Nullable;
 
 public class Fragment1 extends Fragment implements OnClickListener {
     private TableLayout tableLayout;
-    int lastNum;
+    private int lastNum;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if (savedInstanceState == null) {
-            lastNum = 100;
-        } else {
-            lastNum = savedInstanceState.getInt("last_num", 100);
-        }
-        Log.d("-----------------------", Integer.toString(lastNum));
         int colNum = getColNum();
+        if (savedInstanceState != null) {
+            lastNum = savedInstanceState.getInt("lastNum");
+        } else {
+            lastNum = 30;
+        }
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            lastNum = arguments.getInt("lastNum");
+        }
 
         View view = inflater.inflate(R.layout.fragment1, container, false);
         tableLayout = view.findViewById(R.id.table);
@@ -51,25 +54,29 @@ public class Fragment1 extends Fragment implements OnClickListener {
     }
 
     @Override
-    public void onClick(View v) {
-        String text = ((Button) v).getText().toString();
-        if (text == "Add number") {
-            addNumber(tableLayout);
-            setButton(tableLayout);
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("lastNum", lastNum);
+    }
+
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            lastNum = savedInstanceState.getInt("lastNum");
         }
     }
 
     @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt("last_num", lastNum);
-    }
-
-    @Override
-    public void onViewStateRestored(@Nullable final Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-        if (savedInstanceState != null) {
-            lastNum = savedInstanceState.getInt("last_num", 100);
+    public void onClick(View v) {
+        String text = ((Button) v).getText().toString();
+        if (text.equals("Add number")) {
+            addNumber(tableLayout);
+            setButton(tableLayout);
+        } else {
+            int pressedNumber = Integer.parseInt(text);
+            ((MainActivity)getActivity()).callFragment2(pressedNumber, lastNum);
         }
     }
 
@@ -101,8 +108,8 @@ public class Fragment1 extends Fragment implements OnClickListener {
     private void addNumber(TableLayout tableLayout) {
         TableRow lastRow = (TableRow) tableLayout.getChildAt(tableLayout.getChildCount() - 1);
         Button theButton = (Button) lastRow.getChildAt(lastRow.getChildCount() - 1);
-        theButton.setText(Integer.toString(lastNum + 1));
-        if ((lastNum + 1) % 2 == 0) {
+        theButton.setText(String.valueOf(lastNum + 1));
+        if (lastNum % 2 == 0) {
             theButton.setTextColor(Color.RED);
         } else {
             theButton.setTextColor(Color.BLUE);
@@ -138,7 +145,7 @@ public class Fragment1 extends Fragment implements OnClickListener {
 
         for (int i = first_num; i <= last_num; i++) {
             Button button = new Button(context);
-            button.setText(Integer.toString(i));
+            button.setText(String.valueOf(i));
             button.setLayoutParams(params);
             button.setGravity(Gravity.CENTER);
             if (i % 2 == 0) {
