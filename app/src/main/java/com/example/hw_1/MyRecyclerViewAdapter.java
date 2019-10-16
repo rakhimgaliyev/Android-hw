@@ -1,6 +1,7 @@
 package com.example.hw_1;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.ViewHolder> {
+    private static final int VIEW_TYPE_FOOTER = 0;
+    private static final int VIEW_TYPE_CELL = 1;
+
     private List<String> mData;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
@@ -32,8 +36,8 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        String animal = mData.get(position);
-        holder.myTextView.setText(animal);
+        String number = mData.get(position);
+        holder.myTextView.setText(number);
     }
 
     // total number of rows
@@ -42,7 +46,20 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         return mData.size();
     }
 
-    // stores and recycles views as they are scrolled off screen
+    @Override
+    public int getItemViewType(int position) {
+        return (position == mData.size()) ? VIEW_TYPE_FOOTER : VIEW_TYPE_CELL;
+    }
+
+    public void AddNumber() {
+        this.mData.add(Integer.toString(this.mData.size() + 1));
+        notifyDataSetChanged();
+    }
+
+    public List<String> GetData() {
+        return mData;
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView myTextView;
 
@@ -58,17 +75,10 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         }
     }
 
-    // convenience method for getting data at click position
-    String getItem(int id) {
-        return mData.get(id);
-    }
-
-    // allows clicks events to be caught
     void setClickListener(ItemClickListener itemClickListener) {
         this.mClickListener = itemClickListener;
     }
 
-    // parent activity will implement this method to respond to click events
     public interface ItemClickListener {
         void onItemClick(View view, int position);
     }
