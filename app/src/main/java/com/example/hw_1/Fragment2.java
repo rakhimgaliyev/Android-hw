@@ -2,7 +2,6 @@ package com.example.hw_1;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,23 +29,6 @@ public class Fragment2 extends Fragment {
         printNumber(textView);
 
         return view;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        getView().setFocusableInTouchMode(true);
-        getView().requestFocus();
-        getView().setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    ((MainActivity) getActivity()).callFragment1();
-                    return true;
-                }
-                return false;
-            }
-        });
     }
 
     @Override
