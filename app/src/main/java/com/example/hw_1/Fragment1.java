@@ -21,14 +21,19 @@ public class Fragment1 extends Fragment implements MyRecyclerViewAdapter.ItemCli
     private final static String LAST_NUM_KEY = "lastNum";
     private int lastNum = 100;
     private MyRecyclerViewAdapter adapter;
+    private Fragment2 fragment2;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            lastNum = savedInstanceState.getInt(LAST_NUM_KEY, 100);
+        }
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            lastNum = savedInstanceState.getInt(LAST_NUM_KEY, 100);
-        }
-
         View view = inflater.inflate(R.layout.fragment1, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
 
@@ -64,7 +69,14 @@ public class Fragment1 extends Fragment implements MyRecyclerViewAdapter.ItemCli
 
     @Override
     public void onItemClick(View view, int position) {
-        ((MainActivity)getActivity()).callFragment2(position + 1);
+        if (fragment2 == null) {
+            fragment2 = new Fragment2();
+        }
+
+        Bundle bundle = new Bundle();
+        bundle.putInt("pressedNumber", position + 1);
+        fragment2.setArguments(bundle);
+        getFragmentManager().beginTransaction().replace(R.id.fragment_placeholder, fragment2).addToBackStack(null).commit();
     }
 
     private int getColNum() {
