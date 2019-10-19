@@ -53,7 +53,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
 
     public void AddNumber() {
         this.mData.add(Integer.toString(this.mData.size() + 1));
-        notifyDataSetChanged();
+        notifyItemInserted(this.mData.size() + 1);
     }
 
     public List<String> GetData() {
