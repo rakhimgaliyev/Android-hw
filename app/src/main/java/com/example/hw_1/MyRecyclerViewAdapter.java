@@ -57,10 +57,6 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         notifyItemInserted(position);
     }
 
-    public List<String> GetData() {
-        return mData;
-    }
-
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView myTextView;
 
